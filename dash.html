@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>ESP32 LED Dashboard</title>
+
+<style>
+
+body{
+    background:#0f172a;
+    color:rgba(9, 238, 254, 0.721);
+    font-family:Arial;
+    padding:20px;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+}
+
+.title{
+    text-align:center;
+    margin-bottom:30px;
+    color:#ff0000;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:20px;
+}
+
+.card{
+    background:#000000;
+    padding:25px;
+    border-radius:15px;
+    color:#00ff00;
+}
+.cardes{
+    background:#000000;
+    padding:25px;
+    border-radius:15px;
+    color:#00ff00;
+}
+.value{
+    font-size:35px;
+    margin-top:10px;
+}
+
+table{
+    width:100%;
+    margin-top:40px;
+    border-collapse:collapse;
+    background:#1e293b;
+}
+
+th, td{
+    padding:15px;
+    text-align:center;
+}
+
+th{
+    background:#1b1d4b;
+    color:rgb(230, 237, 39);
+}
+
+tr:nth-child(even){
+    background:#334155;
+}
+
+.on{
+    color:#22c55e;
+    font-weight:bold;
+}
+
+.off{
+    color:#ef4444;
+    font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="title">
+<h1>IOT Multi-Sensor Dashboard</h1>
+</div>
+
+<div class="cards">
+
+<div class="card">
+<h2>Temperature</h2>
+<div class="value" id="temp">°C</div>
+</div>
+
+<div class="card">
+<h2>Smoke</h2>
+<div class="value" id="smoke">0</div>
+</div>
+<div class="cardes">
+<h2>Time</h2>
+<div class="value" id="time"></div>
+</div>
+</div>
+
+<table>
+
+<thead>
+<tr>
+<th>ID</th>
+<th>Temperature</th>
+<th>Smoke</th>
+<th>Time</th>
+</tr>
+</thead>
+
+<tbody id="tableBody">
+
+</tbody>
+
+</table>
+
+</div>
+
+<script>
+
+async function loadData(){
+    const response = await fetch('fetch.php');
+    const data = await response.json();
+    let rows = "";
+    if(data.length > 0){
+        document.getElementById("temp").innerHTML = data[0].temperature + " °C";
+        document.getElementById("smoke").innerHTML =data[0].smoke;
+        document.getElementById("time").innerHTML = data[0].created_at;
+        data.forEach(item => {
+
+            rows += `
+            <tr>
+                <td>${item.id}</td>
+                <td>${item.temperature} °C</td>
+                <td>${item.smoke}</td>
+                <td>${item.created_at}</td>
+            </tr>
+            `;
+        });
+    }
+
+    document.getElementById("tableBody").innerHTML = rows;
+}
+
+loadData();
+
+setInterval(loadData, 5000);
+
+</script>
+
+</body>
+</html>
